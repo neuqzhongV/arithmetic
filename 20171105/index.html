@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        canvas {
+            float: left;
+            margin: 0 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="300" height="1000"></canvas>
+    <canvas id="canvas2" width="300" height="1000"></canvas>
+    <canvas id="canvas3" width="300" height="1000"></canvas>
+    <script src="./polygonal.js" type="text/javascript"></script>
+    <script src="./lagrange.js" type="text/javascript"></script>
+    <script src="./newton.js" type="text/javascript"></script>
+    <script>
+        const arr = [{
+            'y': 0.21673067326124068,
+            'x': 0.4253376059707864
+        }, {
+            'y': 0.11484397786075223,
+            'x': 0.2762981513840177
+        }, {
+            'y': 3.2853565533760341,
+            'x': 0.96109304954236108
+        }, {
+            'y': 3.5680755698021307,
+            'x': 0.97537341156933144
+        }, {
+            'y': 0.90716487354108244,
+            'x': 0.72984816169463829
+        }, {
+            'y': 0.30231677594159395,
+            'x': 0.50193203731574354
+        }, {
+            'y': 0.10240071878368509,
+            'x': 0.24998057537720864
+        }, {
+            'y': 0.074116988150058918,
+            'x': 0.17800669897051802
+        }, {
+            'y': 0.25633369309094872,
+            'x': 0.46430378137471906
+        }, {
+            'y': 2.190025143553556,
+            'x': 0.89038631095505116
+        }];
+        // let arr = [{ "x": 3.14, "y": -0.72 }, { "x": 3, "y": -0.6 }, { "x": 13.49, "y": -0.56 }, { "x": 6.61, "y": 0.94 }, { "x": 0.3, "y": 0.39 }, { "x": 1.51, "y": 0.97 }, { "x": 10.27, "y": 1.01 }, { "x": 1.92, "y": 0.65 }, { "x": 3.99, "y": -0.77 }, { "x": 11.11, "y": 1.29 }, { "x": 5.22, "y": 0.63 }, { "x": 14.22, "y": 0.07 }, { "x": 12.7, "y": -0.34 }, { "x": 2.38, "y": 0.12 }, { "x": 3.76, "y": -0.87 }, { "x": 6.09, "y": 1.18 }, { "x": 8.26, "y": -0.72 }, { "x": 9.35, "y": -0.12 }, { "x": 11.91, "y": 0.58 }, { "x": 12.78, "y": -0.4 }, { "x": 4.82, "y": 0.13 }, { "x": 4.41, "y": -0.39 }, { "x": 2.53, "y": -0.07 }, { "x": 2.68, "y": -0.25 }, { "x": 0.93, "y": 0.96 }, { "x": 13.42, "y": -0.58 }, { "x": 14.86, "y": 0.9 }, { "x": 13.64, "y": -0.49 }, { "x": 11.46, "y": 1.06 }, { "x": 14.06, "y": -0.12 }, { "x": 8.47, "y": -0.75 }, { "x": 3.29, "y": -0.81 }, { "x": 0.52, "y": 0.64 }, { "x": 9.11, "y": -0.39 }, { "x": 8.83, "y": -0.62 }, { "x": 8.24, "y": -0.71 }, { "x": 12.28, "y": 0.11 }, { "x": 14.63, "y": 0.61 }, { "x": 9.27, "y": -0.21 }, { "x": 10.59, "y": 1.25 }, { "x": 8.11, "y": -0.65 }, { "x": 1.23, "y": 1.04 }, { "x": 3.97, "y": -0.78 }, { "x": 2.11, "y": 0.45 }, { "x": 12.04, "y": 0.42 }, { "x": 11.67, "y": 0.86 }, { "x": 6.12, "y": 1.18 }, { "x": 0.91, "y": 0.96 }, { "x": 12.94, "y": -0.51 }, { "x": 0.48, "y": 0.6 }, { "x": 10.78, "y": 1.32 }, { "x": 5.19, "y": 0.6 }, { "x": 7.07, "y": 0.45 }, { "x": 7.33, "y": 0.12 }, { "x": 9.78, "y": 0.43 }, { "x": 5.71, "y": 1.08 }, { "x": 7.63, "y": -0.25 }];
+        arr.sort((a, b) => {
+            return a.x - b.x
+        });
+        var newArray = []
+        for (let i = 0; i < arr.length; i++) {
+            newArray[i] = {};
+            newArray[i].x = arr[i].x * 250;
+            newArray[i].y = -arr[i].y * 250 + 900;
+        }
+        const canvasArr = document.getElementsByTagName("canvas");
+        for (let j = 0; j < canvasArr.length; j++) {
+            const ctx2d = canvasArr[j].getContext('2d');
+            ctx2d.lineWidth = 1;
+            // 描点
+            ctx2d.strokeStyle = '#000';
+            ctx2d.beginPath();
+            for (let i = 0; i < newArray.length; i++) {
+                ctx2d.beginPath();
+                ctx2d.arc(newArray[i].x, newArray[i].y, 4, 0, Math.PI * 2);
+                ctx2d.fill();
+            }
+            ctx2d.beginPath();
+            ctx2d.moveTo(0, 0);
+            ctx2d.lineTo(0, 900);
+            ctx2d.lineTo(300, 900);
+            ctx2d.stroke();
+
+            let res = [];
+            if (j === 0) {
+                ctx2d.strokeStyle = '#f00';
+                res = new PolyFitForcast().get(arr);
+            } else {
+                let len = arr.length;
+                let dx = arr[len - 1].x - arr[0].x;
+                for (var i = arr[0].x; i < arr[len - 1].x; i += dx / 250) {
+                    let y;
+                    if (j === 1) {
+                        ctx2d.strokeStyle = '#0f0';
+                        y = lagrange(i, arr)
+                    } else {
+                        ctx2d.strokeStyle = '#00f';
+                        y = newton(i, arr)
+                    }
+                    res.push({
+                        x: i,
+                        y: y
+                    });
+                }
+
+            }
+            const newRes = [];
+            for (let i = 0; i < res.length; i++) {
+                newRes[i] = {};
+                newRes[i].x = res[i].x * 250;
+                newRes[i].y = 900 - res[i].y * 250;
+            }
+            ctx2d.lineWidth = 1;
+            ctx2d.beginPath();
+            ctx2d.moveTo(newRes[0].x, newRes[0].y);
+            for (let i = 1; i < newRes.length; i++) {
+                ctx2d.lineTo(newRes[i].x, newRes[i].y);
+            }
+            ctx2d.stroke();
+
+        }
+    </script>
+
+</body>
+
+</html>

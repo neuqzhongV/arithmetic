@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ZV-Juliaset</title>
+</head>
+<style>
+    #tips {
+        position: fixed;
+        top: 100px;
+        left: 900px;
+        background-color: skyblue;
+        padding: 50px;
+    }
+
+    button {
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div id="tips">
+        <p>点击切换复数C重新绘制</p>
+        祥云<button class="turn">C1:(-0.794, 0.135)</button><br /> 
+        N 形<button class="turn">C2:(0.2560, -0.41)</button><br />        
+        海岛<button class="turn">C3:(-0.576, 0.456)</button><br /> 
+        葫芦<button class="turn">C4:(-0.750, 0.010)</button><br /> 
+        枯叶<button class="turn">C5:(-0.525, 0.585)</button><br />
+    </div>
+    <span>迭代次数n</span><input id='power' type="number" value="200">
+    <span>复数c实部</span><input id="cReal" type="number" step="0.001" value="-0.794">
+    <span>复数c虚部</span><input id="cImag" type="number" step="0.001" value="0.135">
+    <button id="btn">重绘</button>
+    <p id="time"></p>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid black"></canvas>
+</body>
+
+<script>
+    let n = 200;
+    // let c = creatObj(-0.801, 0.156);
+    let c = creatObj(-0.794, 0.135);
+    // let c = creatObj(-0.576, 0.456);
+    // let c = creatObj(-0.75, 0.01);
+    // let c = creatObj(-0.525, 0.585);
+
+    const canvas = document.getElementById('canvas');
+    const power = document.getElementById('power');
+    const cReal = document.getElementById('cReal');
+    const cImag = document.getElementById('cImag');
+    const btn = document.getElementById('btn');
+    const timeStr = document.getElementById('time');
+    const ctx = canvas.getContext("2d");
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    juliaSet();
+
+    btn.onclick = function () {
+        juliaSet();
+    }
+
+    function juliaSet() {
+        n = (power.value - 0) == 0 ? n : (power.value - 0);
+        c = creatObj(cReal.value - 0, cImag.value - 0);
+        let lastTime = new Date().getTime();
+        draw(imageData, n, c);
+        ctx.putImageData(imageData, 0, 0);
+        let currentTime = new Date().getTime();
+        timeStr.innerHTML = "耗时：" + (currentTime - lastTime) + "毫秒";
+    }
+    let turnBtns = document.getElementsByClassName('turn');
+    for (let i = 0; i < turnBtns.length; i++) {
+        turnBtns[i].onclick = function () {
+            let str = this.innerHTML;
+            cReal.value = str.substring(4, 10);
+            cImag.value = str.substring(12, str.length - 1);
+            juliaSet();
+        }
+    }
+
+
+    /**
+     *  julia set
+     *  created by ZhongV 2017/06/18
+     */
+
+    //复数的实部为x，虚部位y
+    function creatObj(real, imag) {
+        return {
+            real: real,
+            imag: imag
+        };
+    }
+
+
+    //公式 Fc(z) = z*z + c；
+    function mainFun(z, c) {
+        let newReal = z.real * z.real - z.imag * z.imag + c.real;
+        let newImag = 2 * z.real * z.imag + c.imag;
+        return {
+            real: newReal,
+            imag: newImag
+        }
+    }
+
+    //半径
+    function model(z) {
+        return Math.sqrt(z.real * z.real + z.imag * z.imag);
+    }
+
+    // 递归
+    function iteration(n, z, c) {
+        if (n == 0) {
+            return model(z);
+        } else {
+            z = mainFun(z, c);
+            return iteration(n - 1, z, c);
+        }
+    }
+
+    // 改变imageData
+    function draw(imgData, n, c) {
+        for (let y = 0; y < HEIGHT; y++) {
+            for (let x = 0; x < WIDTH; x++) {
+                let posX = (x - WIDTH / 2) / 150;
+                let posY = (HEIGHT / 2 - y) / 150;
+                let z = creatObj(posX, posY);
+                let result = iteration(n, z, c);
+                let index = 4 * (y * WIDTH + x);
+                if (result < 4) {
+                    imgData.data[index] = 252;
+                    imgData.data[index + 1] = 157;
+                    imgData.data[index + 1] = 154;
+                    imgData.data[index + 3] = 255;
+                } else {
+                    imgData.data[index] = 0;
+                    imgData.data[index + 1] = 0;
+                    imgData.data[index + 1] = 0;
+                    imgData.data[index + 3] = 255;
+                }
+            }
+        }
+    }
+</script>
+
+</html>

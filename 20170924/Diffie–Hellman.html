@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="./primitiveRoot.js"></script>
+
+    <script>
+        let q = 1901;
+        let priRoots = main(q);
+        let index = Math.floor(Math.random() * (priRoots.length - 1));
+
+        let a = priRoots[index];
+        let XA = Math.floor(q * Math.random() - 1) + 1;
+        // A的公共密钥
+        let YA = remainderFun(a, XA, q);
+
+        let XB = Math.floor(q * Math.random() - 1) + 1;
+        // B的公共密钥        
+        let YB = remainderFun(a, XB, q);
+
+        // A生成共享密钥
+        function entryA(YB) {
+            return remainderFun(YB, XA, q);
+        }
+        // B生成共享密钥
+        function entryB(YA) {
+            return remainderFun(YA, XB, q);
+        }
+
+        let KA = entryA(YB);
+        let KB = entryB(YA);
+        console.log(KA, KB);
+    </script>
+</body>
+
+</html>

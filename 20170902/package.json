@@ -1,0 +1,16 @@
+{
+  "name": "20170902",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "selenium-webdriver": "^3.5.0",
+    "ts-md5": "^1.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
